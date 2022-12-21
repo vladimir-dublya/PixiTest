@@ -14,8 +14,8 @@ class Button {
     buttonWidth = 100,
     buttonHeight = 60,
     buttonColor,
-    x = 0,
-    y = 0,
+    x,
+    y,
     round,
     img,
     title,
@@ -136,6 +136,35 @@ class Button {
 
     // returning ready to use button
 
+    
+let dragTarget = null;
+
+app.stage.interactive = true;
+app.stage.hitArea = app.screen;
+app.stage.on('pointerup', onDragEnd);
+app.stage.on('pointerupoutside', onDragEnd);
+
+function onDragMove(event) {
+  if (dragTarget) {
+    dragTarget.x = (event.data.global.x - x) - buttonWidth / 2;
+    dragTarget.y = (event.data.global.y - y) - buttonHeight / 2;
+  }
+}
+
+function onDragStart() {
+  this.alpha = 0.5;
+  dragTarget = this;
+  app.stage.on('pointermove', onDragMove);
+}
+
+function onDragEnd() {
+  if (dragTarget) {
+      app.stage.off('pointermove', onDragMove);
+      dragTarget.alpha = 1;
+      dragTarget = null;
+  }
+}
+
     return container;
   }
 }
@@ -171,36 +200,6 @@ class AddIcon {
   }
 }
 
-let dragTarget = null;
-
-app.stage.interactive = true;
-app.stage.hitArea = app.screen;
-app.stage.on('pointerup', onDragEnd);
-app.stage.on('pointerupoutside', onDragEnd);
-
-function onDragMove(event) {
-  if (dragTarget) {
-    dragTarget.x = event.data.global.x - dragTarget.width / 2;
-    // dragTarget.hitArea.x = event.data.global.x;
-    // dragTarget.hitArea.y = event.data.global.y; 
-    dragTarget.y = event.data.global.y ; 
-    console.log(dragTarget.hitArea);
-  }
-}
-
-function onDragStart() {
-  this.alpha = 0.5;
-  dragTarget = this;
-  app.stage.on('pointermove', onDragMove);
-}
-
-function onDragEnd() {
-  if (dragTarget) {
-    app.stage.off('pointermove', onDragMove);
-    dragTarget.alpha = 1;
-    dragTarget = null;
-  }
-}
 
 const button = new Button();
 
