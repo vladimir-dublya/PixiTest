@@ -104,14 +104,19 @@ class Button {
           children = [];
         }
       }
-    }); 
+    });
+
+    let prevcontainerX;
+    let prevcontainerY;
 
     container.on('mouseover', () => {
         container.transform.scale.set(1.05, 1.05);
+        container.transform.position.set(container.x + 0, container.y - 30);
     });
 
     container.on('mouseleave', () => {
         container.transform.scale.set(1, 1);
+        container.transform.position.set(container.x + 0, container.y + 30);
     });
     
 
@@ -244,8 +249,8 @@ app.stage.addChild(
     400,
     80,
     [0x0e3558, 0x3970aa, 0x62abdd, 0x83d5ff, 0x93eff7],
-    0,
-    0,
+    100,
+    160,
     20,
     './images/Twitter-logo.svg.png',
     'twitter',
