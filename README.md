@@ -5,7 +5,7 @@
 [DEMO](https://vladimir-dublya.github.io/PixiTest/)
 
 ## Description
-
+Test Task for PrivatBank on PixiJS
 ## Local development
 
 ### Dependencies
