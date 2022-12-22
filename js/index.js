@@ -1,4 +1,11 @@
-import { Application, Container, Graphics, Sprite, Text, Rectangle } from './pixi.min.mjs';
+import {
+  Application,
+  Container,
+  Graphics,
+  Sprite,
+  Text,
+  Rectangle,
+} from './pixi.min.mjs';
 // Create the application
 
 const app = new Application({
@@ -21,7 +28,8 @@ class Button {
     title,
     font,
   ) {
-    const container = new Container({ borderColor: 'black', borderWidth: '5' });
+
+    const container = new Container();
     container.sortableChildren = true;
     container.interactive = true;
     container.cursor = 'pointer';
@@ -36,7 +44,7 @@ class Button {
       buttonWidth / Math.max(50, buttonWidth / len),
     );
 
-    container.on('pointerdown', onDragStart, container); 
+    container.on('pointerdown', onDragStart, container);
 
     container.x = x;
     container.y = y;
@@ -48,8 +56,6 @@ class Button {
     if (buttonHeight < 60) {
       buttonHeight = 60;
     }
-
-    container.hitArea = new Rectangle(x, y, buttonWidth, buttonHeight);
 
     const rectangle = new Graphics();
 
@@ -106,19 +112,30 @@ class Button {
       }
     });
 
-    let prevcontainerX;
-    let prevcontainerY;
+    const mask = new Graphics()
+        .beginFill(0xffffff)
+        .drawRoundedRect(
+            x,
+            y,
+            buttonWidth,
+            buttonHeight,
+            round
+        )
+        .endFill();
+
+    container.mask = mask;
+    
+    container.addChild(mask);
 
     container.on('mouseover', () => {
-        container.transform.scale.set(1.05, 1.05);
-        container.transform.position.set(container.x + 0, container.y - 30);
+      container.transform.scale.set(1.05, 1.05);
+      container.transform.position.set(container.x + 0, container.y - 30);
     });
 
     container.on('mouseleave', () => {
-        container.transform.scale.set(1, 1);
-        container.transform.position.set(container.x + 0, container.y + 30);
+      container.transform.scale.set(1, 1);
+      container.transform.position.set(container.x + 0, container.y + 30);
     });
-    
 
     const text = new AddText().createText(
       title,
@@ -141,34 +158,33 @@ class Button {
 
     // returning ready to use button
 
-    
-let dragTarget = null;
+    let dragTarget = null;
 
-app.stage.interactive = true;
-app.stage.hitArea = app.screen;
-app.stage.on('pointerup', onDragEnd);
-app.stage.on('pointerupoutside', onDragEnd);
+    app.stage.interactive = true;
+    app.stage.hitArea = app.screen;
+    app.stage.on('pointerup', onDragEnd);
+    app.stage.on('pointerupoutside', onDragEnd);
 
-function onDragMove(event) {
-  if (dragTarget) {
-    dragTarget.x = (event.data.global.x - x) - buttonWidth / 2;
-    dragTarget.y = (event.data.global.y - y) - buttonHeight / 2;
-  }
-}
+    function onDragMove(event) {
+      if (dragTarget) {
+        dragTarget.x = event.data.global.x - x - buttonWidth / 2;
+        dragTarget.y = event.data.global.y - y - buttonHeight / 2;
+      }
+    }
 
-function onDragStart() {
-  this.alpha = 0.5;
-  dragTarget = this;
-  app.stage.on('pointermove', onDragMove);
-}
+    function onDragStart() {
+      this.alpha = 0.5;
+      dragTarget = this;
+      app.stage.on('pointermove', onDragMove);
+    }
 
-function onDragEnd() {
-  if (dragTarget) {
-      app.stage.off('pointermove', onDragMove);
-      dragTarget.alpha = 1;
-      dragTarget = null;
-  }
-}
+    function onDragEnd() {
+      if (dragTarget) {
+        app.stage.off('pointermove', onDragMove);
+        dragTarget.alpha = 1;
+        dragTarget = null;
+      }
+    }
 
     return container;
   }
@@ -204,7 +220,6 @@ class AddIcon {
     return sprite;
   }
 }
-
 
 const button = new Button();
 
@@ -281,12 +296,12 @@ app.stage.addChild(
 );
 
 function gradient(from, to) {
-  const c = document.createElement("canvas");
-  const ctx = c.getContext("2d");
-  const grd = ctx.createLinearGradient(0,0,100,100);
+  const c = document.createElement('canvas');
+  const ctx = c.getContext('2d');
+  const grd = ctx.createLinearGradient(0, 0, 100, 100);
   grd.addColorStop(0, from);
   grd.addColorStop(1, to);
   ctx.fillStyle = grd;
-  ctx.fillRect(0,0,100,100);
+  ctx.fillRect(0, 0, 100, 100);
   return new PIXI.Texture.from(c);
 }
